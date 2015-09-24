@@ -34,8 +34,8 @@ import java.awt.Color;
 import java.io.File;
 import java.util.List;
 
-//Abs, should we create a pkg name so we can : import pkg.feiwoayf\;?! in all the classes
-
+//BY IDA DE SMET & ABBY THOMPSON
+//MediaSelection, CommentaryAdd and Mainframe classes required
 public class Mainframe {
 
 	/**
@@ -108,7 +108,7 @@ public class Mainframe {
 		mp.setVideoSurface(mpf.newVideoSurface(c));
 		//mp.playMedia("big_buck_bunny_1_minute.avi"); // this is used so when testing we don't have to rechoose the video every time
 
-		//__________________________________________________________________________ REWIND BUTTON <-----halp
+		//__________________________________________________________________________ REWIND BUTTON
 		rwdbutton = new JButton();
 		rwdbutton.addActionListener(new ActionListener() { //GLITCHY AF
 			public void actionPerformed(ActionEvent e) {
@@ -258,7 +258,6 @@ public class Mainframe {
 						}
 					});
 					psmp3.add(btnOK);
-
 				} else if (!ms.isMSOpen){
 					ms.start(false);
 				} else if (ms.isMSOpen){

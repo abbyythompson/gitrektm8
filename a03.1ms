@@ -1,10 +1,12 @@
 import java.awt.Dimension;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -16,12 +18,13 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.JFileChooser;
 import uk.co.caprica.vlcj.player.media.Media;
 
-
+// BY IDA DE SMET & ABBY THOMPSON
+// MediaSelection, CommentaryAdd and Mainframe classes required
 public class MediaSelection extends JPanel implements ActionListener {
 	/**
 	 * inititalized variables required
 	 */
-	private static final long serialVersionUID = 1L; //do we need this Abby?!
+	private static final long serialVersionUID = 1L;
 	private JButton mp3, festival;
 	protected JFrame frame;
 	protected boolean isvideo;
@@ -180,7 +183,6 @@ public class MediaSelection extends JPanel implements ActionListener {
 							
 							try {
 								Process p1 = pb1.start();
-								//p1.waitFor(); //potentially here in code
 							} catch (IOException e1) { e1.printStackTrace(); }
 							Mainframe.setVideoSource(".vid.avi"); // new audio-less video
 							
@@ -190,8 +192,14 @@ public class MediaSelection extends JPanel implements ActionListener {
 							
 							try {
 								Process p2 = pb2.start();
-								//p2.waitFor(); /potentially here in code
-							} catch (IOException e1) {e1.printStackTrace();}
+								System.out.println("doing");
+								errorMessage("Loading video, please wait");// popup here
+								p2.waitFor(); // waits for process to be finished
+								System.out.println("finished");
+								errorMessage("Finished merge, video is now playing");// popup here
+
+								// closes popup here
+							} catch (IOException | InterruptedException e1) {e1.printStackTrace();}
 
 							//close all windows
 							Mainframe.setVideoSource(userVideoName + extension);
@@ -212,7 +220,7 @@ public class MediaSelection extends JPanel implements ActionListener {
 	/**
 	 * brings JFrame frame to the front
 	 */
-	private void BringToFront() {
+	public void BringToFront() {
 		frame.setVisible(true);
 	}
 
@@ -239,7 +247,7 @@ public class MediaSelection extends JPanel implements ActionListener {
 	/**
 	 * Checks if video/ audio name contains a space/ tab character
 	 */
-	private static boolean checkForSpaces(String s){
+	protected static boolean checkForSpaces(String s){
 		if (s == null| s.contains(" ") | s.contains("\t")){
 			return false;
 		}

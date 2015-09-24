@@ -1,28 +1,26 @@
 import java.awt.Dimension;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.JFileChooser;
-import uk.co.caprica.vlcj.player.media.Media;
 
 // BY IDA DE SMET & ABBY THOMPSON
 // MediaSelection, CommentaryAdd and Mainframe classes required
 public class MediaSelection extends JPanel implements ActionListener {
 	/**
-	 * inititalized variables required
+	 * Initialized variables required
 	 */
 	private static final long serialVersionUID = 1L;
 	private JButton mp3, festival;
@@ -39,6 +37,7 @@ public class MediaSelection extends JPanel implements ActionListener {
 	private String extension;
 	private FileFilter filter;
 	private boolean acceptableName = true;
+
 
 	/**
 	 * This constructor adds buttons onto a new frame's Panel, if it's mp3
@@ -73,7 +72,7 @@ public class MediaSelection extends JPanel implements ActionListener {
 		chooser = new JFileChooser(); 
 		chooser.setCurrentDirectory(new java.io.File("."));
 		chooser.setDialogTitle(choosertitle);
-		
+
 		//adding filter to the file chooser
 		if (isvideo){ // checking only for avi/ mp4 files or directories
 			videoFilter();
@@ -82,14 +81,14 @@ public class MediaSelection extends JPanel implements ActionListener {
 		}
 		chooser.setFileFilter(filter); // sets filter according to if it's a video/ audio
 		chooser.setAcceptAllFileFilterUsed(false);
-		
+
 		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) { 
 			if (isvideo){
-				videoFile = chooser.getSelectedFile().getName(); // gets the chosen video file name
+				videoFile = chooser.getSelectedFile().getAbsolutePath(); // gets the chosen video file name
 				Mainframe.setVideoSource(videoFile); // sets selected video from file chooser as main source
 				Mainframe.changeVideo(); // changes main video to the chosen video file
 			} else {
-				musicFile = chooser.getSelectedFile().getName();// gets the chosen audio file name
+				musicFile = chooser.getSelectedFile().getAbsolutePath();// gets the chosen audio file name
 				Mainframe.setAudioSource(musicFile);// sets selected video from file chooser as main source
 				popupSubmitmp3(); // goes into a pop up asking to submit the mp3
 			}
@@ -101,7 +100,7 @@ public class MediaSelection extends JPanel implements ActionListener {
 	 * @see javax.swing.JComponent#getPreferredSize()
 	 */
 	public Dimension getPreferredSize(){ return new Dimension(200, 200); }
-	
+
 	/**
 	 * This function starts the frame if it is a video
 	 */
@@ -124,11 +123,11 @@ public class MediaSelection extends JPanel implements ActionListener {
 			frame.setVisible(true);
 		}
 	}
-	
+
 	//_______________________________________________________________________________________ COMFIRMATION OF MP3 SELECTION
 	/**
-	* This constructor creates a pop up frame that checks the user wants to submit the audio file to the video
-	*/
+	 * This constructor creates a pop up frame that checks the user wants to submit the audio file to the video
+	 */
 	public void popupSubmitmp3() {
 		psmp3 = new JFrame();
 		psmp3.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -137,12 +136,12 @@ public class MediaSelection extends JPanel implements ActionListener {
 		pscontentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		psmp3.setContentPane(pscontentPane);
 		pscontentPane.setLayout(null);
-		
+
 		//_______________________________________________________________________________________ CONFIRM AUDIO & VIDEO LABEL
 		lblA = new JLabel("Do you want to submit this audio to this video?");
 		lblA.setBounds(12, 43, 426, 31);
 		pscontentPane.add(lblA);
-		
+
 		//_______________________________________________________________________________________ CANCEL BUTTON
 		JButton btnCancel = new JButton("CANCEL");
 		btnCancel.addActionListener(new ActionListener() {
@@ -152,25 +151,25 @@ public class MediaSelection extends JPanel implements ActionListener {
 		});
 		btnCancel.setBounds(210, 100, 117, 25);
 		pscontentPane.add(btnCancel);
-		
+
 		//_______________________________________________________________________________________ YES BUTTON
 		JButton btnYes = new JButton("YES");
 		btnYes.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-			
+
 				if ((Mainframe.getAudioSource() != null)){ // checks an audio source is mentioned
 
 					String userVideoName = nameFilePopup();//get file name to save video as
-					
+
 					if (userVideoName != null){
 						nameWithExtensions(userVideoName); // checks if entered file contains .mp4 or .avi
 
 						File f = new File(userVideoName + extension);// creates temp file named the userVideoName
 						if (!MediaSelection.checkForSpaces(userVideoName)){ // check name doesn't contain spaces, symbols & isn't null
-							errorMessage("Spaces bro");
+							errorMessage("No spaces in filename, Please Try Again");
 							acceptableName = false;
 						} else if (f.exists()) { // check name doesn't already exist
-							errorMessage("existingfile");
+							errorMessage("Existing File, Please Try Again");
 							acceptableName = false;
 						} else {
 							acceptableName = true;
@@ -180,36 +179,41 @@ public class MediaSelection extends JPanel implements ActionListener {
 							//delete's audio off actual video
 							String cmd1 = "ffmpeg -i " + Mainframe.getVideoSource() + " -an .vid.avi";
 							ProcessBuilder pb1 = new ProcessBuilder("/bin/bash", "-c", cmd1);
-							
+
 							try {
+								@SuppressWarnings("unused")
 								Process p1 = pb1.start();
 							} catch (IOException e1) { e1.printStackTrace(); }
 							Mainframe.setVideoSource(".vid.avi"); // new audio-less video
-							
+
+							String videoPath = null;
+							videoPath = System.getProperty("user.dir") + "/" +userVideoName + extension;
+
 							//merges audio & video
-							String cmd2 = "ffmpeg -i " + Mainframe.getVideoSource() + " -i " + Mainframe.getAudioSource() + " " + userVideoName + extension; //combines the video and audio
+							String cmd2 = "ffmpeg -i " + Mainframe.getVideoSource() + " -i " + Mainframe.getAudioSource() + " " + videoPath/* + userVideoName + extension*/; //combines the video and audio
 							ProcessBuilder pb2 = new ProcessBuilder("/bin/bash", "-c", cmd2);
-							
 							try {
 								Process p2 = pb2.start();
-								System.out.println("doing");
 								errorMessage("Loading video, please wait");// popup here
 								p2.waitFor(); // waits for process to be finished
-								System.out.println("finished");
 								errorMessage("Finished merge, video is now playing");// popup here
 
 								// closes popup here
 							} catch (IOException | InterruptedException e1) {e1.printStackTrace();}
 
 							//close all windows
-							Mainframe.setVideoSource(userVideoName + extension);
+							Mainframe.setVideoSource(videoPath/* + userVideoName + extension*/);
 							Mainframe.changeVideo();
 							psmp3.setVisible(false);
 
-							//SET FRAME TO DIE WHEN THIS DIES TOO _______________________________________________________________________________
 						}
 					}
 				}
+			}
+
+			private String File(String string) {
+				// TODO Auto-generated method stub
+				return null;
 			}
 		});
 		btnYes.setBounds(20, 100, 117, 25);
@@ -293,12 +297,12 @@ public class MediaSelection extends JPanel implements ActionListener {
 			}
 		};
 	}
-	
+
 	/**
-	* Launches an error message pop up to tell them of a specified string error
-	*/
+	 * Launches an error message pop up to tell them of a specified string error
+	 */
 	private void errorMessage(String error){
 		JOptionPane.showMessageDialog(this, error);
 	}
-	
+
 }

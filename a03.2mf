@@ -1,5 +1,4 @@
 import java.awt.Canvas;
-import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import java.awt.BorderLayout;
@@ -7,32 +6,21 @@ import javax.swing.JPanel;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.awt.CardLayout;
-import javax.swing.BoxLayout;
+
 import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
 import javax.swing.JSlider;
-import javax.swing.JTextArea;
-import javax.swing.SwingConstants;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import uk.co.caprica.vlcj.binding.LibVlc;
-import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
-import uk.co.caprica.vlcj.player.media.Media;
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
-import java.awt.Panel;
-import javax.swing.JEditorPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.Color;
-import java.io.File;
-import java.util.List;
 
 //BY IDA DE SMET & ABBY THOMPSON
 //MediaSelection, CommentaryAdd and Mainframe classes required
@@ -41,16 +29,22 @@ public class Mainframe {
 	/**
 	 * Initialize needed variables
 	 */
-	private JButton b1, playbutton, pausebutton, ffdbutton, rwdbutton, mp3Selectbtn, videoSelectbtn, mutebutton;
+	private JButton playbutton, pausebutton, ffdbutton, rwdbutton, mp3Selectbtn, videoSelectbtn, mutebutton;
 	private JSlider slider;
 	protected JFrame psmp3;
 	protected JPanel pscontentPane;
 	protected static EmbeddedMediaPlayer mp;
-	private static String video, audio;
+	static String video;
+	private static String audio;
 	protected boolean ffd = false;
 	protected boolean rwd = true;
 	protected Rewind r = null;
-
+	final public ImageIcon rwd_Icon = new ImageIcon(getClass().getResource("/res/rw.png"));
+	final public ImageIcon ffd_Icon = new ImageIcon(getClass().getResource("/res/ffd.png"));
+	final public ImageIcon mute_Icon = new ImageIcon(getClass().getResource("/res/mute.png"));
+	final public ImageIcon play_Icon = new ImageIcon(getClass().getResource("/res/play.png"));
+	final public ImageIcon pause_Icon = new ImageIcon(getClass().getResource("/res/pause.png"));
+	final public ImageIcon vol_Icon = new ImageIcon(getClass().getResource("/res/vol.png"));
 	/**
 	 * Launch the main application.
 	 */
@@ -63,7 +57,7 @@ public class Mainframe {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				Mainframe mf = new Mainframe(null);
+				new Mainframe(null);
 			}
 		});
 	}
@@ -125,7 +119,7 @@ public class Mainframe {
 				}
 			}
 		});
-		rwdbutton.setIcon(new ImageIcon("rw.png"));
+		rwdbutton.setIcon(rwd_Icon);
 		rwdbutton.setLocation(100, 900);
 		rwdbutton.setBounds(50,10,50,10);
 		p1.add(rwdbutton);
@@ -166,7 +160,7 @@ public class Mainframe {
 				}
 			}
 		});
-		playbutton.setIcon(new ImageIcon("play.png"));
+		playbutton.setIcon(play_Icon);
 		playbutton.setBounds(50,10,50,10);
 		p1.add(playbutton);
 
@@ -177,7 +171,7 @@ public class Mainframe {
 				mp.pause();
 			}
 		});
-		pausebutton.setIcon(new ImageIcon("pause.png"));
+		pausebutton.setIcon(pause_Icon);
 		pausebutton.setBounds(50,10,500,10);
 		p1.add(pausebutton);
 
@@ -195,21 +189,21 @@ public class Mainframe {
 				}
 			};
 		});
-		ffdbutton.setIcon(new ImageIcon("ffd.png"));
+		ffdbutton.setIcon(ffd_Icon);
 		ffdbutton.setBounds(50,10,50,10);
 		p1.add(ffdbutton);
 
 		//__________________________________________________________________________ MUTE BUTTON
 		mutebutton = new JButton();
-		mutebutton.setIcon(new ImageIcon("mute.png"));
+		mutebutton.setIcon(mute_Icon);
 		mutebutton.addActionListener(new ActionListener() {
 			int sliderValue = 50;
 			public void actionPerformed(ActionEvent e) {
 				if (mp.isMute()){
-					mutebutton.setIcon(new ImageIcon("mute.png"));
+					mutebutton.setIcon(mute_Icon);
 					slider.setValue(sliderValue);
 				} else {
-					mutebutton.setIcon(new ImageIcon("vol.png"));
+					mutebutton.setIcon(vol_Icon);
 					sliderValue = mp.getVolume();
 					slider.setValue(0);
 				}
@@ -280,7 +274,7 @@ public class Mainframe {
 	/**
 	 * Set's video as the input String s from other classes
 	 */
-	protected static void setVideoSource(String s){ video = s; }
+	protected static void setVideoSource(String string){ video = string; }
 
 	/**
 	 * Set's audio as the input String s from other classes

@@ -16,7 +16,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-
+//BY IDA DE SMET & ABBY THOMPSON
+//MediaSelection, CommentaryAdd and Mainframe classes required
 public class CommentaryAdd extends JFrame {
 
 	/**
@@ -111,8 +112,12 @@ public class CommentaryAdd extends JFrame {
 							ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c","text2wave .filename.txt -o " + userMp3Name + extension);
 							try {
 								Process p1 = pb1.start();
+								p1.waitFor();
 								Process p = pb.start();
-							} catch (IOException e1) {
+								// add loading popup here
+								p.waitFor();
+								// closes popup here
+							} catch (IOException | InterruptedException e1) {
 								e1.printStackTrace();
 							}
 						}
@@ -172,7 +177,7 @@ public class CommentaryAdd extends JFrame {
 		return info;
 	}
 
-	/*
+	/**
 	 * Creates a popup for displaying a certain string error, if the file name already exists or contains spaces
 	 */
 	private void errorMessage(String error){
@@ -181,7 +186,7 @@ public class CommentaryAdd extends JFrame {
 
 	/**
 	 * Checks that a video/ audio name that user inputs contains a mp3 extension
-	 * If it does, this won't create a file that is cdouble .mp3.mp3
+	 * If it does, this won't create a file that is double .mp3.mp3
 	 */
 	private void nameWithExtensions(String s){
 		extension = ".mp3";
